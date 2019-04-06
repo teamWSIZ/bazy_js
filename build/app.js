@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // lib/app.ts
 const express = require("express");
 const user_1 = require("./user");
-const result_1 = require("./result");
 const log4js = require("log4js");
 const log = log4js.getLogger('Controller');
 log.level = 'debug';
@@ -50,18 +49,18 @@ app.get('/now', (q, s) => {
         s.send(r.rows);
     });
 });
+app.get('/hello', (req, res) => {
+    const name = req.query.name;
+    res.send('Hello ' + name + ' !');
+});
 app.get('/', function (req, res) {
     let u = new user_1.User('Abra', 'Kadabras');
     res.send('Hello World!' + JSON.stringify(u));
 });
 app.get('/add', function (req, res) {
-    log.info('/add path invoked');
     let a = parseInt(req.query.a);
     let b = parseInt(req.query.b);
-    let result = new result_1.Result(a + b, 'OK');
-    // throw new Error("killed"); //callback just exits
-    res.send(result);
-    log.info('response sent');
+    res.send('wynik=' + (a + b));
 });
 app.get('/sensor-count', function (req, res) {
     request.get('http://10.10.0.55:7777/devices', (e, rez, body) => {

@@ -55,7 +55,10 @@ app.get('/now', (q, s) => {
   });
 });
 
-
+app.get('/hello', (req,res)=>{
+  const name = req.query.name;
+  res.send('Hello ' + name + ' !');
+});
 
 app.get('/', function (req, res) {
   let u = new User('Abra', 'Kadabras');
@@ -63,13 +66,9 @@ app.get('/', function (req, res) {
 });
 
 app.get('/add', function (req, res) {
-  log.info('/add path invoked');
   let a = parseInt(req.query.a);
   let b = parseInt(req.query.b);
-  let result = new Result(a + b, 'OK');
-  // throw new Error("killed"); //callback just exits
-  res.send(result);
-  log.info('response sent')
+  res.send('wynik=' + (a+b));
 });
 
 app.get('/sensor-count', function (req, res) {
