@@ -1,3 +1,6 @@
-## Simple node.js app, written in typescript
+## Prosta apka w  node.js używająca typescript i łącząca się do bazy danych postgres
 
-Note: run `tsc`, then go to `./build/` and run `node app.js`. 
+* zklonować repo
+* w głównym folderze uruchomić (z konsoli) `npm install`
+* potem (lub między edycjami) uruchomić `tsc` (kompilacja .ts do .js)
+* cały projekt zbudowany jest w folderze `build`; celem uruchomienia trzeba tam wejść i dać `node app.js`
