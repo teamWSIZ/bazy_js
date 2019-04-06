@@ -1,0 +1,46 @@
+# https://medium.com/javascript-in-plain-english/typescript-with-node-and-express-js-why-when-and-how-eb6bc73edd5d
+better yet:
+https://developer.okta.com/blog/2018/11/15/node-express-typescript
+
+
+npm init
+
+npm install typescript -s
+
+package.json
+"scripts": {
+    "tsc": "tsc"
+},
+
+npm run tsc -- --init
+
+tsconfig.json
+    outDir -> ./build
+
+npm install express -s
+
+(Express and Typescript packages are independent. The consequence of this is that
+Typescript does not “know” types of Express classes. There is a specific npm package for the Typescript
+to recognize the Express types.)
+
+npm install @types/express -s
+
+app.ts
+import express = require('express');
+(...)
+app.get('/', function (req, res) {
+  res.send('Hello World!');
+});
+
+npm run tsc --> node build/app.js
+
+
+npm install ts-node-dev -s
+"scripts": {
+    "tsc": "tsc",
+    "dev": "ts-node-dev --respawn --transpileOnly ./app/app.ts",
+    "prod": "tsc && node ./build/app.js"
+},
+npm run dev
+
+
