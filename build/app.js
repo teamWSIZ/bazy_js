@@ -19,6 +19,14 @@ const pool = new Pool({
     user: 'student',
     password: 'wsiz#1234'
 });
+app.get('/count', (req, res) => {
+    pool.query('select count(*) from aa.x', (err, response) => {
+        if (err)
+            throw err;
+        console.log(response);
+        res.send(response.rows);
+    });
+});
 app.get('/users', (req, res) => {
     pool.query('select * from aa.x order by name', (er, re) => {
         if (er)
@@ -34,7 +42,7 @@ app.get('/users/:userid', (req, res) => {
     });
 });
 app.get('/users/create/:name', (req, res) => {
-    console.log('creating');
+    console.log('creating user with name:' + req.params.name);
     pool.query('INSERT INTO aa.x (name) VALUES ($1) returning id', [req.params.name], (er, re) => {
         if (er)
             throw er;

@@ -23,6 +23,15 @@ const pool = new Pool({
   password: 'wsiz#1234'
 });
 
+app.get('/count', (req, res) => {
+    pool.query('select count(*) from aa.x',
+        (err:any, response:any) => {
+        if (err) throw err;
+        console.log(response);
+        res.send(response.rows);
+    });
+});
+
 app.get('/users', (req, res) => {
   pool.query('select * from aa.x order by name', (er:any, re:any) => {
     if (er) throw er;
@@ -38,8 +47,9 @@ app.get('/users/:userid', (req, res) => {
       });
 });
 
+
 app.get('/users/create/:name', (req, res) => {
-  console.log('creating');
+  console.log('creating user with name:' + req.params.name);
   pool.query('INSERT INTO aa.x (name) VALUES ($1) returning id', [req.params.name],
       (er:any, re:any) => {
         if (er) throw er;
@@ -47,6 +57,8 @@ app.get('/users/create/:name', (req, res) => {
         res.send(re.rows);
       });
 });
+
+
 
 app.get('/now', (q, s) => {
   pool.query('select now()', (e:any, r:any) => {
@@ -86,3 +98,14 @@ app.listen(3003, function () {
   pool.query('set search_path to aa');
 
 });
+
+/**
+ * Zadanie:
+ * stworzyć tabelę messages, z polami:
+ * id SERIAL PRIMARY KEY,
+ * title TEXT
+ * content TEXT
+ *
+ * Potem w aplikacji oprogramować ścieżkę '/messages' która wylistuje
+ * wsystkie dane z tabeli messages
+ */
