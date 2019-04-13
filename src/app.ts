@@ -10,6 +10,7 @@ log.level = 'debug';
 
 //rest calls
 import request = require('request');
+import {Message} from "./message";
 
 // Create a new express application instance
 const app: express.Application = express();
@@ -47,20 +48,25 @@ app.get('/messages', (req, res) => {
 
 // "UPSERT" message (czyli insert jesli nie ma id, i update jesli jest id)
 app.post('/messages', (req, res) => {
-    let message = req.body;
-    console.log(`Message: ${JSON.stringify(message)}`);
-    // if (message.id === undefined) {
-    //     console.log('inserting');
-    //     pool.query('INSERT INTO aa.x (name) VALUES ($1) returning id', [message.name], (e:any,re:any)=>{
-    //         message.id = re.rows[0].id;
-    //         console.log(`Returning ${JSON.stringify(message)}`);
-    //         res.send(message);
-    //     });
-    // } else {
-    //     console.log('updating');
-    //     res.send('OK')
-    // }
-    res.send('OK');
+    let message: Message = req.body;
+    if (message.id === undefined) {
+        pool.query('INSERT INTO aa.messages (title, content) VALUES ($1,$2) returning *',
+            [message.title, message.content], (e:any,re:any)=>{
+            //ta operacja zapisała message na bazie, i nadała mu "id";
+            //pełny zapisany obiekt został zwrócony -- wysyłamy go klientowi,
+            //żeby wiedział jakie "id" ma jego zapisany message
+            if (e) {
+                console.log(`error: ${e}`);
+                res.send(e);
+                return;
+            }
+            message = re.rows[0];
+            res.send(message);
+        });
+    } else {
+        console.log('updating');
+        res.send('OK')
+    }
 });
 
 
