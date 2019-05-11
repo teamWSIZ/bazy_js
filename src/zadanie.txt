@@ -1,0 +1,21 @@
+- stworzyć własny schema (jeśli na 10.10.0.33)
+- stworzyć tabelę
+
+champions (
+ id, (int)
+ name,
+ role,
+ winrate, (float)
+ pickrate (float)
+)
+
+- Potem w nodejs:
+  - zrobić operację insert (typu app.post('/messages',...) ,
+  - zrobic operację i przeszukiwania:
+     a) pojedynczego championa po id
+     b) wszystkich championów
+     c) wszystkich championów o danej roli (typu app.get('/messages/...',
+
+- dodać kilku championów na podstawie https://na.op.gg/champion/statistics , korzystając z
+  zapytań obsługiwanych przez naszą apkę w nodejs (i postman'a)
+

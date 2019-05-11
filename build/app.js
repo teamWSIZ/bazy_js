@@ -28,6 +28,14 @@ app.get('/count', (req, res) => {
         res.send(response.rows);
     });
 });
+/// CHAMPIONS
+app.get('/champions', (req, res) => {
+    pool.query('select * from aa.champions order by id', (er, re) => {
+        if (er)
+            throw er;
+        res.send(re.rows);
+    });
+});
 //// MESSAGES
 //Returns all messages
 app.get('/messages', (req, res) => {
@@ -83,7 +91,7 @@ app.get('/users/create/:name', (req, res) => {
         res.send(re.rows);
     });
 });
-//upsert user
+//upsert user (insert jeśli nowy, update jeśli istniejący)
 app.post('/users', (req, res) => {
     let user = req.body;
     console.log(`User: ${user}`);
@@ -97,6 +105,7 @@ app.post('/users', (req, res) => {
     }
     else {
         console.log('updating');
+        //todo: dokonczyc to
         res.send('OK');
     }
 });
