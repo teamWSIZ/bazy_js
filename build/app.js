@@ -28,6 +28,9 @@ app.get('/count', (req, res) => {
         res.send(response.rows);
     });
 });
+//todo:
+//  - modules
+//  - separate controllers for each entity
 /// CHAMPIONS
 app.get('/champions', (req, res) => {
     pool.query('select * from aa.champions order by id', (er, re) => {
@@ -37,35 +40,66 @@ app.get('/champions', (req, res) => {
     });
 });
 //// MESSAGES
-//Returns all messages
+//podstawowe 3 metody
+// wszystkie message w systemie
 app.get('/messages', (req, res) => {
-    pool.query('select * from aa.messages order by id', (er, re) => {
-        if (er)
-            throw er;
-        res.send(re.rows);
+    pool.query('select * from aa.messages order by id', (error, response) => {
+        if (error)
+            throw error;
+        res.send(response.rows);
     });
 });
 // "UPSERT" message (czyli insert jesli nie ma id, i update jesli jest id)
 app.post('/messages', (req, res) => {
-    let message = req.body;
-    if (message.id === undefined) {
-        pool.query('INSERT INTO aa.messages (title, content) VALUES ($1,$2) returning *', [message.title, message.content], (e, re) => {
+    let m = req.body; //to przyszło w zapytaniu http w sekcji body (JSON)
+    if (m.id === undefined) {
+        pool.query('INSERT INTO aa.messages (title, content) VALUES ($1, $2) returning *', [m.title, m.content], (error, response) => {
             //ta operacja zapisała message na bazie, i nadała mu "id";
             //pełny zapisany obiekt został zwrócony -- wysyłamy go klientowi,
             //żeby wiedział jakie "id" ma jego zapisany message
-            if (e) {
-                console.log(`error: ${e}`);
-                res.send(e);
+            if (error) {
+                console.log(`error: ${error}`);
+                res.send(error);
                 return;
             }
-            message = re.rows[0];
-            res.send(message);
+            m = response.rows[0];
+            res.send(m);
         });
     }
     else {
-        console.log('updating');
-        res.send('OK');
+        console.log(`Updateujemy message o id=${m.id}`);
+        // tu obiekt ma już ID; trzeba więc zrobić update wszystkich pól
+        pool.query('UPDATE aa.messages SET title=$2, content=$3 where id=$1 returning *', [m.id, m.title, m.content], (error, re) => {
+            if (error) {
+                console.log(`error: ${error}`);
+                res.send(error);
+                return;
+            }
+            m = re.rows[0];
+            res.send(m);
+        });
     }
+});
+app.delete('/messages/:id', (req, res) => {
+    const id = req.params.id;
+    pool.query('DELETE FROM aa.messages where id=$1 returning *', [id], (error, re) => {
+        if (error) {
+            console.log(`error: ${error}`);
+            res.send(error);
+            return;
+        }
+        console.log(`usunieto ${JSON.stringify(re.rows[0])} elementów`);
+        res.send(`OK`);
+    });
+});
+//dodatkowe
+app.get('/messages/search', (req, res) => {
+    const searchedTitle = `%${req.query.title}%`;
+    pool.query('SELECT * FROM aa.messages WHERE title LIKE $1 ORDER BY id', [searchedTitle], (error, response) => {
+        if (error)
+            throw error;
+        res.send(response.rows);
+    });
 });
 //// USERS
 app.get('/users', (req, res) => {
@@ -105,7 +139,6 @@ app.post('/users', (req, res) => {
     }
     else {
         console.log('updating');
-        //todo: dokonczyc to
         res.send('OK');
     }
 });
