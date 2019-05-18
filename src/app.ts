@@ -17,6 +17,12 @@ const app: express.Application = express();
 
 app.use(express.json());        //pozwala na czytanie req.body
 
+app.use((req,res,next)=>{
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
 //pg; https://node-postgres.com
 const Pool = require('pg').Pool;
 const pool = new Pool({

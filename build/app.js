@@ -11,6 +11,11 @@ const request = require("request");
 // Create a new express application instance
 const app = express();
 app.use(express.json()); //pozwala na czytanie req.body
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 //pg; https://node-postgres.com
 const Pool = require('pg').Pool;
 const pool = new Pool({
@@ -94,7 +99,7 @@ app.delete('/messages/:id', (req, res) => {
 });
 //dodatkowe
 app.get('/messages/search', (req, res) => {
-    const searchedTitle = `%${req.query.title}%`;
+    const searchedTitle = `%${req.query.title}%`; //trzeba opakować % bo inaczej poniższe nie wstawia $1
     pool.query('SELECT * FROM aa.messages WHERE title LIKE $1 ORDER BY id', [searchedTitle], (error, response) => {
         if (error)
             throw error;
