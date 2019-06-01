@@ -12,6 +12,7 @@ const request = require("request");
 const app = express();
 app.use(express.json()); //pozwala na czytanie req.body
 app.use((req, res, next) => {
+    //konfiguracja CORS
     res.header("Access-Control-Allow-Origin", "*");
     res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST');
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -101,7 +102,7 @@ app.delete('/messages/:id', (req, res) => {
 //dodatkowe
 app.get('/messages/search', (req, res) => {
     const searchedTitle = `%${req.query.title}%`; //trzeba opakować % bo inaczej poniższe nie wstawia $1
-    pool.query('SELECT * FROM aa.messages WHERE title LIKE $1 ORDER BY id', [searchedTitle], (error, response) => {
+    pool.query('SELECT * FROM aa.messages WHERE title ILIKE $1 ORDER BY id', [searchedTitle], (error, response) => {
         if (error)
             throw error;
         res.send(response.rows);

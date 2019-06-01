@@ -117,7 +117,7 @@ app.delete('/messages/:id', (req, res) => {
 //dodatkowe
 app.get('/messages/search', (req, res) => {
     const searchedTitle = `%${req.query.title}%`;  //trzeba opakować % bo inaczej poniższe nie wstawia $1
-    pool.query('SELECT * FROM aa.messages WHERE title LIKE $1 ORDER BY id', [searchedTitle],
+    pool.query('SELECT * FROM aa.messages WHERE title ILIKE $1 ORDER BY id', [searchedTitle],
         (error:any, response:any) => {
         if (error) throw error;
         res.send(response.rows);
