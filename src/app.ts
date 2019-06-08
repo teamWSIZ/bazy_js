@@ -1,7 +1,7 @@
 // lib/app.ts
 import express = require('express');
-import {User} from "./user";
-import {Result} from "./result";
+import {User} from "./model/user";
+import {Result} from "./model/result";
 
 
 import log4js = require('log4js');
@@ -10,7 +10,7 @@ log.level = 'debug';
 
 //rest calls
 import request = require('request');
-import {Message} from "./message";
+import {Message} from "./model/message";
 
 // Create a new express application instance
 const app: express.Application = express();
@@ -124,6 +124,15 @@ app.get('/messages/search', (req, res) => {
     });
 });
 
+
+//// USERS
+
+app.get('/customers', (req, res) => {
+    pool.query('select * from aa.cust order by customername', (er:any, re:any) => {
+        if (er) throw er;
+        res.send(re.rows);
+    });
+});
 
 //// USERS
 

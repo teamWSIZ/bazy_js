@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 // lib/app.ts
 const express = require("express");
-const user_1 = require("./user");
+const user_1 = require("./model/user");
 const log4js = require("log4js");
 const log = log4js.getLogger('Controller');
 log.level = 'debug';
@@ -106,6 +106,14 @@ app.get('/messages/search', (req, res) => {
         if (error)
             throw error;
         res.send(response.rows);
+    });
+});
+//// USERS
+app.get('/customers', (req, res) => {
+    pool.query('select * from aa.cust order by customername', (er, re) => {
+        if (er)
+            throw er;
+        res.send(re.rows);
     });
 });
 //// USERS
