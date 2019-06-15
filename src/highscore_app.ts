@@ -31,3 +31,22 @@ app.listen(3003, function () {
     pool.query('set search_path to aa');
 });
 
+/**
+ * Tabela highscores:
+ * id : SERIAL
+ * alias : text
+ * score : int
+ * created : timestamp
+ *
+ *
+ * Zadanie:
+ * 1) stworzyć tabelę na bazie,
+ * 2) dodać kilka danych (ręcznie, może być z intellij)
+ * 3) na backendzie (ten fajl) dodać metodę zwracającą wrzystkie highscores (można posortować po score, malejąco)
+ * 4) na backebdzue dodać metodę dodawania/modyfikacji highscores,
+ * 5) dodać metodę usuwania highscores (by id)
+ */
+
+
+
+
