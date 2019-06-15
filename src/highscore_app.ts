@@ -99,7 +99,7 @@ app.listen(3003, function () {
  * 1) stworzyć tabelę na bazie,
  * 2) dodać kilka danych (ręcznie, może być z intellij)
  * 3) na backendzie (ten fajl) dodać metodę zwracającą wrzystkie highscores (można posortować po score, malejąco)
- * 4) na backebdzue dodać metodę dodawania/modyfikacji highscores,
+ * 4) na backendzie dodać metodę dodawania/modyfikacji highscores,
  * 5) dodać metodę usuwania highscores (by id)
  */
 
