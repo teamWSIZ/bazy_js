@@ -1,4 +1,6 @@
 import express = require('express');
+import {Message} from "./model/message";
+import {Score} from "./model/score";
 const app: express.Application = express();
 
 app.use(express.json());        //pozwala na czytanie req.body
@@ -23,6 +25,60 @@ const pool = new Pool({
 app.get('/status', (req,res)=>{
     res.send('Highscore app works OK');
 });
+
+
+app.get('/scores', (req, res) => {
+    pool.query('select * from aa.high order by score desc', (er:any, re:any) => {
+        if (er) throw er;
+        res.send(re.rows);
+    });
+});
+
+app.post('/scores', (req, res) => {
+    let m: Score = req.body;
+    m.created = new Date();
+    if (m.id === undefined) {
+        pool.query('INSERT INTO aa.high (alias, score, created) VALUES ($1, $2, $3) ' +
+            'returning *',
+            [m.alias, m.score, m.created], (error:any, response:any)=>{
+                if (error) {
+                    console.log(`error: ${error}`);
+                    res.send(error);
+                    return;
+                }
+                m = response.rows[0];
+                res.send(m);
+            });
+    } else {
+        console.log(`Updateujemy high score o id=${m.id}`);
+        pool.query('UPDATE aa.high SET alias=$2, score=$3, created=$4 where id=$1 ' +
+            'returning *',
+            [m.id, m.alias, m.score, m.created], (error:any,re:any)=>{
+                if (error) {
+                    console.log(`error: ${error}`);
+                    res.send(error);
+                    return;
+                }
+                m = re.rows[0];
+                res.send(m);
+            });
+    }
+});
+
+
+app.delete('/scores/:id', (req, res) => {
+    const id = req.params.id;
+    pool.query('DELETE FROM aa.high where id=$1 returning *', [id], (error:any,re:any)=>{
+        if (error) {
+            console.log(`error: ${error}`);
+            res.send(error);
+            return;
+        }
+        console.log(`usunieto ${JSON.stringify(re.rows[0])} elementów`);
+        res.send(`OK`);
+    });
+});
+
 
 
 
