@@ -22,7 +22,23 @@ app.get('/status', (req, res) => {
     res.send('Highscore app works OK');
 });
 app.get('/scores', (req, res) => {
-    pool.query('select * from aa.high order by score desc', (er, re) => {
+    let alias = '%';
+    let user_alias = req.query.alias;
+    if (user_alias !== undefined)
+        alias = user_alias;
+    //....
+    let created = new Date(); /// tu powinna być data defaultowa, typu 1970
+    created.setDate(created.getDate() - 10000); //10000 dni temu...
+    // jeśli klient podał 'since', to nadpisać created
+    let user_since = req.query.since;
+    if (user_since !== undefined)
+        created = user_since;
+    let limit = 1000000000;
+    // jeśli klient podał 'limit', to nadpisać...
+    let user_limit = req.query.limit;
+    if (user_limit !== undefined)
+        limit = user_limit;
+    pool.query('select * from aa.high where alias like $1 and created >= $2 order by score desc limit $3', [alias, created, limit], (er, re) => {
         if (er)
             throw er;
         res.send(re.rows);
@@ -69,7 +85,7 @@ app.delete('/scores/:id', (req, res) => {
         res.send(`OK`);
     });
 });
-app.listen(3003, function () {
+app.listen(3001, function () {
     console.log('Example app listening on port 3003!');
     pool.query('set search_path to aa');
 });
@@ -85,6 +101,6 @@ app.listen(3003, function () {
  * 1) stworzyć tabelę na bazie,
  * 2) dodać kilka danych (ręcznie, może być z intellij)
  * 3) na backendzie (ten fajl) dodać metodę zwracającą wrzystkie highscores (można posortować po score, malejąco)
- * 4) na backebdzue dodać metodę dodawania/modyfikacji highscores,
+ * 4) na backendzie dodać metodę dodawania/modyfikacji highscores,
  * 5) dodać metodę usuwania highscores (by id)
  */

@@ -28,7 +28,30 @@ app.get('/status', (req,res)=>{
 
 
 app.get('/scores', (req, res) => {
-    pool.query('select * from aa.high order by score desc', (er:any, re:any) => {
+    let alias = '%';
+    let user_alias = req.query.alias;
+    if (user_alias !== undefined) alias = user_alias;
+    //....
+
+
+
+    let created = new Date(); /// tu powinna być data defaultowa, typu 1970
+    created.setDate(created.getDate() - 10000); //10000 dni temu...
+    // jeśli klient podał 'since', to nadpisać created
+    let user_since = req.query.since;
+    if (user_since!==undefined) created = user_since;
+
+    let limit = 1000000000;
+    // jeśli klient podał 'limit', to nadpisać...
+    let user_limit = req.query.limit;
+    if (user_limit!==undefined) limit = user_limit;
+
+    //działa: http://localhost:3001/scores?alias=crazy_horse&since=2019-06-04T09:24:10.892Z
+
+
+    pool.query('select * from aa.high where alias like $1 and created >= $2 order by score desc limit $3',
+        [alias, created, limit],
+        (er:any, re:any) => {
         if (er) throw er;
         res.send(re.rows);
     });
@@ -82,7 +105,7 @@ app.delete('/scores/:id', (req, res) => {
 
 
 
-app.listen(3003, function () {
+app.listen(3001, function () {
     console.log('Example app listening on port 3003!');
     pool.query('set search_path to aa');
 });
