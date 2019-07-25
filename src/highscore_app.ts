@@ -3,6 +3,8 @@ import {Message} from "./model/message";
 import {Score} from "./model/score";
 const app: express.Application = express();
 
+let faker = require('faker');
+
 app.use(express.json());        //pozwala na czytanie req.body
 
 app.use((req,res,next)=>{
@@ -24,6 +26,21 @@ const pool = new Pool({
 
 app.get('/status', (req,res)=>{
     res.send('Highscore app works OK');
+});
+
+app.get('/fake', (req,res)=>{
+    let w = ['a'];
+    faker.locale = "pl";
+    for (let i = 0; i < 10; i++) {
+        console.log('-----');
+        console.log(faker.name.findName());
+        console.log(faker.name.lastName());
+        console.log(faker.phone.phoneNumber());
+        console.log(faker.image.avatar());
+        console.log(faker.address.city());
+    }
+
+    res.send('Names:' + JSON.stringify(w));
 });
 
 

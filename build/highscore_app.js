@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const app = express();
+let faker = require('faker');
 app.use(express.json()); //pozwala na czytanie req.body
 app.use((req, res, next) => {
     //konfiguracja CORS
@@ -21,6 +22,19 @@ const pool = new Pool({
 app.get('/status', (req, res) => {
     res.send('Highscore app works OK');
 });
+app.get('/fake', (req, res) => {
+    let w = ['a'];
+    faker.locale = "pl";
+    for (let i = 0; i < 10; i++) {
+        console.log('-----');
+        console.log(faker.name.findName());
+        console.log(faker.name.lastName());
+        console.log(faker.phone.phoneNumber());
+        console.log(faker.image.avatar());
+        console.log(faker.address.city());
+    }
+    res.send('Names:' + JSON.stringify(w));
+});
 app.get('/scores', (req, res) => {
     let alias = '%';
     let user_alias = req.query.alias;
@@ -38,6 +52,7 @@ app.get('/scores', (req, res) => {
     let user_limit = req.query.limit;
     if (user_limit !== undefined)
         limit = user_limit;
+    //działa: http://localhost:3001/scores?alias=crazy_horse&since=2019-06-04T09:24:10.892Z
     pool.query('select * from aa.high where alias like $1 and created >= $2 order by score desc limit $3', [alias, created, limit], (er, re) => {
         if (er)
             throw er;
