@@ -1,8 +1,8 @@
 // lib/app.ts
 import express = require('express');
 import log4js = require('log4js');
-const NodeRSA = require('node-rsa');
 
+const NodeRSA = require('node-rsa');
 const fs = require('fs-extra');
 
 
@@ -42,20 +42,23 @@ app.get('/test_e_d', (req, res) => {
 
 //load text files
 app.get('/dd', (req, res) => {
+    //wczytywanie pliku tekstowego
     let public_key_text = fs.readFileSync('keys/alpha.pub');
     res.send({'public':public_key_text.toString()});
 });
 
 app.get('/type', (req, res) => {
+
     let public_key_text = fs.readFileSync('keys/alpha.pub');
     let public_key = new NodeRSA();
-    public_key.importKey(public_key_text);
+    public_key.importKey(public_key_text);  //tworzenie obiektu typu NodeRSA z tekstu klucza publicznego
     //-------
-    let private_key = (new NodeRSA()).importKey(fs.readFileSync('keys/beta.key'));
+    let private_key = (new NodeRSA())
+        .importKey(fs.readFileSync('keys/beta.key')); //... klucza prywatnego
     res.send({
         'is_public': public_key.isPublic(),
         'is_private': public_key.isPrivate(),
-        'is_key_private': private_key.isPrivate()
+        'is_key_private': private_key.isPublic()
     });
 });
 
@@ -63,7 +66,7 @@ app.get('/zeta', (req, res) => {
     let pub = (new NodeRSA()).importKey(fs.readFileSync('keys/beta.pub'));
     let prv = (new NodeRSA()).importKey(fs.readFileSync('keys/beta.key'));
     let txt = 'abra kadabra';
-    let enc = prv.encrypt(txt, 'base64');
+    let enc = pub.encrypt(txt, 'base64');
     let dec = prv.decrypt(enc, 'utf8');
     res.send({'plain': txt, 'enc': enc, 'dec': dec});
 });
