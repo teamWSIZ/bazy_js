@@ -67,4 +67,4 @@ mamy zamiaru prosić innego CA (Certificate Authority) o podpisanie naszych cert
 
 - podpisywanie `beta.csr` przez `ca.crt` (i klucz prywatny związany z `ca`)
 
-``
+`openssl x509 -req -days 3650 -in beta.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out beta.crt -sha256`
