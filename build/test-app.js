@@ -9,6 +9,7 @@ const log = log4js.getLogger('Controller');
 log.level = 'debug';
 // Create a new express application instance
 const app = express();
+let stored_signature = '';
 app.use(express.json()); //pozwala na czytanie req.body
 app.use((req, res, next) => {
     //konfiguracja CORS
@@ -57,6 +58,30 @@ app.get('/zeta', (req, res) => {
     let enc = pub.encrypt(txt, 'base64');
     let dec = prv.decrypt(enc, 'utf8');
     res.send({ 'plain': txt, 'enc': enc, 'dec': dec });
+});
+app.get('/sign', (req, res) => {
+    let text = req.query.text;
+    let prv = (new NodeRSA()).importKey(fs.readFileSync('keys/beta.key'));
+    let signature = prv.sign(text, 'base64', 'utf-8');
+    stored_signature = signature;
+    //test: proba weryfikacji
+    let pub = (new NodeRSA()).importKey(fs.readFileSync('keys/beta.pub'));
+    let wynik = pub.verify(text, signature, 'utf-8', 'base64');
+    console.log(`weryfikacja: ${wynik}; tekst:[${text}] podpis:${signature}`);
+    res.send({ 'text': text, 'signature': signature });
+});
+app.get('/verify', (req, res) => {
+    let text = req.query.text;
+    let sign = req.query.signature;
+    let pub = (new NodeRSA()).importKey(fs.readFileSync('keys/beta.pub'));
+    let verify_ok = pub.verify(text, sign, 'utf-8', 'base64');
+    console.log('stored==provided? ' + (stored_signature === sign));
+    console.log(typeof stored_signature);
+    console.log('stored ' + stored_signature);
+    console.log(typeof sign);
+    console.log('provid ' + sign);
+    console.log(`weryfikacja: ${verify_ok}; tekst:[${text}] podpis:${sign}`);
+    res.send({ 'verify_ok': verify_ok });
 });
 const port = 3004;
 app.listen(port, function () {

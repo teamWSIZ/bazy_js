@@ -47,5 +47,24 @@ publiczny (z prywatnego)
 `openssl dgst -sha1 -sign alpha.key -out annoucement.sha1 annoucement.txt
 `
 
-`openssl dgst -sha1 -verify alpha.pub -signature annoucement.sha1 annoucement.txt
-`
+`openssl dgst -sha1 -verify alpha.pub -signature annoucement.sha1 annoucement.txt`
+
+
+#### certyfikaty
+
+- generowanie głównego certyfikatu (ciąg certyfikatów musi się na nim zaczynać; robimy to, jeśli nie
+mamy zamiaru prosić innego CA (Certificate Authority) o podpisanie naszych certyfikatów)
+
+`openssl req -x509 -newkey rsa:1024 -keyout ca.key -nodes -out ca.crt -days 10000`
+
+- wyświetlenie informacji z certyfikatu 
+
+`openssl x509 -noout -text -in ca.crt`
+
+- generowanie CSR (Certificate Signing Request)
+
+`openssl req -new -key beta.key -sha256 -out beta.csr`
+
+- podpisywanie `beta.csr` przez `ca.crt` (i klucz prywatny związany z `ca`)
+
+``
