@@ -1,0 +1,14 @@
+--- Funkcje agregujące
+select productid, sum(quantity) suma_sprzedazy
+from orderdetail
+-- where orderdetailid < 1000
+group by productid
+order by suma_sprzedazy;
+
+-- z tabeli fakeuser wypisać ile jest userów z każdego z miast, posortować malejąco
+
+
+select count(*) c, extract(month from o.orderdate) m
+from orders o
+group by m
+order by c desc
