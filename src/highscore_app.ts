@@ -123,7 +123,7 @@ app.delete('/scores/:id', (req, res) => {
 
 
 app.listen(3001, function () {
-    console.log('Example app listening on port 3003!');
+    console.log('Example app listening on port 3001!');
     pool.query('set search_path to aa');
 });
 
